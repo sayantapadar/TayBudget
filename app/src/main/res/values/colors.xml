@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="grey">#D3D3D3</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="yellow">#FFB300</color>
+    <color name="yellow_light">#FFD54F</color>
+    <color name="red_bright">#C62828</color>
+    <color name="budget_day">#FFB300</color>
+    <color name="budget_cumulative">#039BE5</color>
+    <color name="budget_limit">#99E53935</color>
+
+    <color name="sms_credit">#800080</color>
+    <color name="sms_upi">#008080</color>
+    <color name="sms_debit">#000080</color>
+</resources>

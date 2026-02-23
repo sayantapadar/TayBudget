@@ -1,0 +1,48 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.example.taybudget.activity.MainActivity">
+
+    <item
+        android:id="@+id/action_add_goal"
+        android:orderInCategory="100"
+        android:title="Add Goal"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_view_goals"
+        android:orderInCategory="100"
+        android:title="View Goals"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_view_sms"
+        android:orderInCategory="101"
+        android:title="View SMS"
+        app:showAsAction="ifRoom"
+        android:icon="@drawable/outline_message_24"/>
+    <item
+        android:id="@+id/action_view_refresh"
+        android:orderInCategory="99"
+        android:title="Refresh"
+        app:showAsAction="ifRoom"
+        android:icon="@drawable/round_refresh_24"/>
+    <item
+        android:id="@+id/action_sms_pattern"
+        android:orderInCategory="150"
+        android:title="Edit SMS Patterns"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/action_edit_bank_balance"
+        android:orderInCategory="149"
+        android:title="Edit Bank Balance"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/action_version"
+        android:orderInCategory="1000"
+        android:title="Version"
+        app:showAsAction="never"/>
+<!--    <item-->
+<!--        android:id="@+id/action_exp_code"-->
+<!--        android:orderInCategory="100"-->
+<!--        android:title="Experimental Code"-->
+<!--        app:showAsAction="never" />-->
+</menu>

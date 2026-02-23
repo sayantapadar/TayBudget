@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="16dp"
+    android:layout_marginEnd="16dp"
+    android:orientation="horizontal"
+    android:gravity="center_vertical">
+
+    <TextView
+        android:id="@+id/item_balance_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Necessity"
+        android:layout_weight="2.2"/>
+
+    <com.google.android.material.progressindicator.LinearProgressIndicator
+        android:id="@+id/item_balance_progress"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_weight="2"/>
+
+    <TextView
+        android:id="@+id/item_balance_actual_amount"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="116131"
+        android:layout_marginStart="16dp"
+        android:layout_weight="2.2"/>
+    <TextView
+        android:id="@+id/item_balance_limit_amount"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="331616"
+        android:layout_marginStart="8dp"
+        android:layout_weight="2.2"/>
+</androidx.appcompat.widget.LinearLayoutCompat>
