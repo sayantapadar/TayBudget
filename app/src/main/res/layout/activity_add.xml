@@ -58,7 +58,7 @@
                     android:id="@+id/add_amount"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="numberDecimal" />
+                    android:inputType="numberSigned" />
 
             </com.google.android.material.textfield.TextInputLayout>
 

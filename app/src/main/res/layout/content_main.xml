@@ -21,19 +21,22 @@
                 android:layout_width="match_parent"
                 android:layout_height="72dp"
                 android:layout_margin="16dp"
-                tools:listitem="@layout/item_small_circle" />
+                tools:listitem="@layout/item_small_circle"
+                android:visibility="gone"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_marginBottom="16dp"
-                android:background="@color/grey" />
+                android:background="@color/grey"
+                android:visibility="gone" />
 
             <androidx.appcompat.widget.LinearLayoutCompat
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:layout_marginTop="16dp">
 
                 <androidx.cardview.widget.CardView
                     android:id="@+id/main_date_card"
@@ -87,7 +90,8 @@
                     android:layout_height="30dp"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="16dp"
-                    app:cardCornerRadius="30dp">
+                    app:cardCornerRadius="30dp"
+                    android:visibility="gone">
 
                     <TextView
                         android:layout_width="wrap_content"
