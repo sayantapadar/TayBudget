@@ -312,7 +312,7 @@ public class SmsReadActivity extends AppCompatActivity {
         String smsJson = sharedPref.getString(CommonConstants.SHARED_PREFERENCES_SMS, "[]");
         smsPatternsLastUpdated = sharedPref.getLong(CommonConstants.SHARED_PREFERENCES_PATTERNS_LAST_UPDATED, 0);
         lastRead = sharedPref.getLong(CommonConstants.SHARED_PREFERENCES_SMS_LAST_READ, -1);
-        smsList.addAll(new Gson().fromJson(smsJson, new TypeToken<List<Sms>>() {
+        smsList.addAll(CommonUtils.getGson().fromJson(smsJson, new TypeToken<List<Sms>>() {
         }.getType()));
         smsList.sort(Comparator.comparing(Sms::getDate).reversed());
         smsList.stream().filter(Sms::isHighlight).forEach(sms -> {

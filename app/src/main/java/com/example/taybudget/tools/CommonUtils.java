@@ -5,13 +5,11 @@ import android.app.DatePickerDialog;
 import android.content.Context;
 import android.text.InputType;
 import android.util.Log;
-import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 
 import com.example.taybudget.R;
-import com.example.taybudget.activity.MainActivity;
 import com.example.taybudget.data.handler.model.Tracker;
 import com.example.taybudget.data.model.Aggregate;
 import com.example.taybudget.data.model.Data;
@@ -25,15 +23,16 @@ import com.example.taybudget.data.model.Sms;
 import com.example.taybudget.enums.AggregateType;
 import com.example.taybudget.enums.CategoryEnum;
 import com.example.taybudget.enums.DataType;
-import com.example.taybudget.enums.TrackerTypeEnum;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonParseException;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -359,5 +358,51 @@ public class CommonUtils {
                 .setMessage(String.join("\n", items))
                 .setPositiveButton("OK", (dialog, which) -> dialog.dismiss())
                 .create().show();
+    }
+
+    public static Gson getGson() {
+        return new GsonBuilder()
+                .registerTypeAdapter(Date.class, (JsonDeserializer<Date>) (json, typeOfT, context) -> {
+                    // Define all possible formats here
+                    String[] formats = new String[] {
+                            // 1. Month-first formats (Common in US/India)
+                            "MMM d, yyyy HH:mm:ss",    // Sep 5, 2026 18:48:59
+                            "MMM dd, yyyy HH:mm:ss",   // Sep 05, 2026 18:48:59
+                            "MMM d, yyyy h:mm:ss a",   // Sep 5, 2026 6:48:59 PM
+                            "MMM d, yyyy",             // Sep 5, 2026
+
+                            // 2. Day-first formats (Common in UK/Europe)
+                            "d MMM, yyyy HH:mm:ss",    // 5 Sep, 2026 18:48:59
+                            "dd MMM, yyyy HH:mm:ss",   // 05 Sep, 2026 18:48:59
+                            "d MMM, yyyy",             // 5 Sep, 2026
+                            "dd-MM-yyyy HH:mm:ss",     // 05-09-2026 18:48:59
+                            "dd/MM/yyyy",              // 05/09/2026
+
+                            // 3. ISO 8601 & Technical formats
+                            "yyyy-MM-dd'T'HH:mm:ss.SSSZ", // 2026-09-05T18:48:59.000+0000
+                            "yyyy-MM-dd'T'HH:mm:ss'Z'",   // 2026-09-05T18:48:59Z
+                            "yyyy-MM-dd HH:mm:ss",        // 2026-09-05 18:48:59
+                            "yyyy-MM-dd",                 // 2026-09-05
+
+                            // 4. Gson Default variations
+                            "MMM d, yyyy",                // Oct 4, 2026 (Gson default)
+                    };
+
+                    for (String format : formats) {
+                        try {
+                            return new SimpleDateFormat(format, Locale.US).parse(json.getAsString());
+                        } catch (ParseException ignored) {
+                            // Try the next format
+                        }
+                    }
+
+                    // Fallback: Try long timestamp or throw error
+                    try {
+                        return new Date(json.getAsLong());
+                    } catch (Exception e) {
+                        throw new JsonParseException("Unparseable date: \"" + json.getAsString() + "\". Supported formats: " + Arrays.toString(formats));
+                    }
+                })
+                .create();
     }
 }
