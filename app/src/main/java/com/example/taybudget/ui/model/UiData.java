@@ -7,6 +7,7 @@ public class UiData {
     private String message;
     private String footer;
     private Data data;
+    private boolean isSelected;
 
 
     public UiData(String heading, String message, String footer, Data data) {
@@ -51,4 +52,8 @@ public class UiData {
     public void setFooter(String footer) {
         this.footer = footer;
     }
+
+    public boolean isSelected() { return isSelected; }
+
+    public void setSelected(boolean selected) { isSelected = selected; }
 }

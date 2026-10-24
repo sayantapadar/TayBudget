@@ -141,7 +141,8 @@ public class MonthlyAggregatesDAO {
             CollectionReference masterAggRef = db.collection(DatabaseSchemaEnum.MASTER_AGGREGATE.getName());
 
             db.runTransaction(transaction -> {
-                        DocumentReference newMonthlyDoc = monthlyAggRef.document();
+                        String uniqueDocId = monthlyAggregate.getUser() + "_" + name;
+                        DocumentReference newMonthlyDoc = monthlyAggRef.document(uniqueDocId);
                         transaction.set(newMonthlyDoc, monthlyAggregate);
                         masterAggRef.document(masterAggregateId).set(masterAggregate);
                         return null;

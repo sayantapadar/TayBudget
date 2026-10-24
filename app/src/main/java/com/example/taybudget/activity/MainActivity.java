@@ -14,7 +14,9 @@ import com.example.taybudget.data.handler.IncomeHandler;
 import com.example.taybudget.data.handler.MasterAggregateHandler;
 import com.example.taybudget.data.handler.TrackerHandler;
 import com.example.taybudget.data.handler.builders.html.HtmlTableBuilder;
+import com.example.taybudget.data.handler.interfaces.TaskCompletionCallback;
 import com.example.taybudget.data.handler.model.Tracker;
+import com.example.taybudget.data.model.Data;
 import com.example.taybudget.data.model.Expense;
 import com.example.taybudget.data.model.Income;
 import com.example.taybudget.data.model.MasterAggregate;
@@ -53,6 +55,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -81,6 +84,7 @@ public class MainActivity extends AppCompatActivity {
     private String masterAggregateDocumentId;
 
     private final Map<String, Boolean> updatingMap = new HashMap<>();
+    private boolean isMultiSelectMode = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,6 +113,71 @@ public class MainActivity extends AppCompatActivity {
             launcher.launch(intent);
         });
 
+        binding.deleteFab.setOnClickListener(view -> {
+            // Access the adapter via binding
+            GenericRecyclerAdapter<UiData> adapter = (GenericRecyclerAdapter<UiData>) ((RecyclerView)findViewById(R.id.main_data_recycler)).getAdapter();
+
+            if (adapter != null) {
+                // Retrieve the list from your adapter (assuming your GenericRecyclerAdapter has a getItems() method)
+                List<UiData> allItems = adapter.getList();
+                List<UiData> itemsToDelete = new ArrayList<>();
+
+                for (UiData item : allItems) {
+                    if (item.isSelected()) {
+                        itemsToDelete.add(item);
+                    }
+                }
+
+                if (itemsToDelete.isEmpty()) {
+                    Toast.makeText(this, "No items selected for deletion", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(this, itemsToDelete.size() + " items selected for deletion", Toast.LENGTH_SHORT).show();
+                    // Show Progress
+                    AlertDialog progressDialog = new AlertDialog.Builder(this)
+                            .setTitle("Deleting Items")
+                            .setMessage("Please wait...")
+                            .setCancelable(false)
+                            .create();
+                    progressDialog.show();
+
+                    final int totalItems = itemsToDelete.size();
+                    final int[] deletedCount = {0};
+
+                    for (UiData item : itemsToDelete) {
+                        Expense expense = (Expense) item.getData();
+                        ExpenseHandler.getInstance().deleteExpense(expense, new TaskCompletionCallback() {
+                            @Override
+                            public void error(String message) {
+                                Log.e("DeleteError", message);
+                                checkProgress(progressDialog, deletedCount, totalItems);
+                            }
+
+                            @Override
+                            public void taskComplete(String message) {
+                                checkProgress(progressDialog, deletedCount, totalItems);
+                            }
+                        });
+                    }
+                }
+            }
+        });
+
+    }
+
+    /**
+     * Helper method to track completion and refresh UI
+     */
+    private void checkProgress(AlertDialog dialog, int[] count, int total) {
+        count[0]++;
+        if (count[0] >= total) {
+            runOnUiThread(() -> {
+                dialog.dismiss();
+                Toast.makeText(this, "Successfully deleted " + total + " items", Toast.LENGTH_SHORT).show();
+                isMultiSelectMode = false;
+                findViewById(R.id.delete_fab).setVisibility(isMultiSelectMode ? android.view.View.VISIBLE : android.view.View.GONE);
+                populateView(false); // Refresh the list
+            });
+        }
     }
 
     private void populateTrackers() {
@@ -411,13 +480,17 @@ public class MainActivity extends AppCompatActivity {
                 .build();
         GenericRecyclerAdapter<UiData> adapter = new GenericRecyclerAdapter<>(MainActivity.this,
                 R.layout.item_data, uiDataList, (context, viewHolder, position) -> {
-            ((TextView) viewHolder.itemView.findViewById(R.id.item_data_heading)).setText(uiDataList.get(position).getHeading());
-            ((TextView) viewHolder.itemView.findViewById(R.id.item_data_footer)).setText(uiDataList.get(position).getFooter());
-            ((TextView) viewHolder.itemView.findViewById(R.id.item_data_message)).setText(uiDataList.get(position).getMessage());
-            if (uiDataList.get(position).getFooter().isEmpty())
+            UiData item = uiDataList.get(position);
+            ((TextView) viewHolder.itemView.findViewById(R.id.item_data_heading)).setText(item.getHeading());
+            ((TextView) viewHolder.itemView.findViewById(R.id.item_data_footer)).setText(item.getFooter());
+            ((TextView) viewHolder.itemView.findViewById(R.id.item_data_message)).setText(item.getMessage());
+            if (item.getFooter().isEmpty())
                 viewHolder.itemView.findViewById(R.id.item_data_footer).setVisibility(View.GONE);
             else
                 viewHolder.itemView.findViewById(R.id.item_data_footer).setVisibility(View.VISIBLE);
+            viewHolder.itemView.findViewById(R.id.item_data_checkbox).setVisibility(isMultiSelectMode ? View.VISIBLE : View.GONE);
+            ((CheckBox)viewHolder.itemView.findViewById(R.id.item_data_checkbox))
+                    .setOnCheckedChangeListener((buttonView, isChecked) -> item.setSelected(isChecked));
         }, viewHolder -> viewHolder.itemView.findViewById(R.id.item_data_card).setOnLongClickListener(v -> {
             editData(uiDataList.get(filterableRecyclerBehaviour.getOriginalItemPosition(viewHolder.getAdapterPosition())));
             return true;
@@ -562,6 +635,18 @@ public class MainActivity extends AppCompatActivity {
             } catch (PackageManager.NameNotFoundException e) {
                 throw new RuntimeException(e);
             }
+        } else if (id == R.id.action_multi_select) {
+            isMultiSelectMode = !isMultiSelectMode;
+
+            RecyclerView recyclerView = findViewById(R.id.main_data_recycler);
+            if (recyclerView.getAdapter() != null) {
+                // This triggers the binder logic for all visible items
+                recyclerView.getAdapter().notifyDataSetChanged();
+            }
+
+            findViewById(R.id.delete_fab).setVisibility(isMultiSelectMode ? android.view.View.VISIBLE : android.view.View.GONE);
+
+            Toast.makeText(this, isMultiSelectMode ? "Multi-select enabled" : "Multi-select disabled", Toast.LENGTH_SHORT).show();
         }
         return super.onOptionsItemSelected(item);
     }

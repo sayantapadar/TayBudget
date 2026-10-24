@@ -2,6 +2,6 @@
 <resources>
     <string-array name="spinner_add">
         <item>Add Expense</item>
-        <item>Add Income</item>
+<!--        <item>Add Income</item>-->  <!-- do not need income anymore -->
     </string-array>
 </resources>

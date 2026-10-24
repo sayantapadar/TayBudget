@@ -36,6 +36,11 @@
         android:title="Edit Bank Balance"
         app:showAsAction="never"/>
     <item
+        android:id="@+id/action_multi_select"
+        android:orderInCategory="150"
+        android:title="Select Multiple"
+        app:showAsAction="never"/>
+    <item
         android:id="@+id/action_version"
         android:orderInCategory="1000"
         android:title="Version"
